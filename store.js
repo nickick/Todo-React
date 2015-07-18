@@ -8,18 +8,23 @@ var findItemById = function(id) {
   return items.filter(function(item) {
     return item.id === id
   })[0]
-},
+}
 
 ListStore = {
+  listName: 'NickHongList',
+
+  urlRoot: function() {
+    return "http://listalous.herokuapp.com/lists/" + this.listName;
+  },
 
   getItems: function() {
     return items
   },
 
-  loadItems: function(listName) {
+  loadItems: function() {
     var loadRequest = $.ajax({
       type: 'GET',
-      url: "https://listalous.herokuapp.com/lists/" + listName + "/"
+      url: this.urlRoot()
     })
 
     loadRequest.done(function(dataFromServer) {
@@ -30,7 +35,7 @@ ListStore = {
   addItem: function(itemDescription) {
     var creationRequest = $.ajax({
       type: 'POST',
-      url: "http://listalous.herokuapp.com/lists/NickHongList/items",
+      url: this.urlRoot() + "/items",
       data: { description: itemDescription, completed: false }
     })
 
@@ -45,7 +50,7 @@ ListStore = {
 
     var updateRequest = $.ajax({
       type: 'PUT',
-      url: "https://listalous.herokuapp.com/lists/NickHongList/items/" + itemId,
+      url: this.urlRoot() + "/items/" + itemId,
       data: { completed: !currentCompletedValue }
     })
 
@@ -59,7 +64,7 @@ ListStore = {
 
     var deleteRequest = $.ajax({
       type: 'DELETE',
-      url: "https://listalous.herokuapp.com/lists/NickHongList/items/" + itemId,
+      url: this.urlRoot() + "/items/" + itemId,
     })
 
     deleteRequest.done(function(deletedItemData) {
