@@ -108,15 +108,34 @@ form {
 }
 
 a.swap {
-  display: block;
+  display: inline-block;
   height: 50px;
   width: 50px;
   background: url("https://pilotmoon.com/popclip/extensions/icon/swap.png") center no-repeat;
   background-size: contain;
-  margin: 20px auto;
+  margin-left: 10px;
   cursor: pointer;
 }
 
 .hidden {
   display: none;
+}
+
+.swap-form input {
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 10px 30px;
+  border-left:    1px  solid #7d82b0;
+  border-right:   1px  solid #7d82b0;
+  border-bottom:  2px  solid #7d82b0;
+  border-top:     15px solid #477187;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+#errors {
+  color: white;
+  background: red;
+  margin-bottom: 30px;
 }

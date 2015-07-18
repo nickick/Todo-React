@@ -12,12 +12,12 @@
 
 <body>
   <div id="container">
-    <h1>Your List App</h1>
+    <div id='header'></div>
     <div id="app">
+      <div id='errors'></div>
       <div id='form-container'></div>
       <div id='list-container'></div>
     </div>
-    <div id='swap-icon'></div>
   </div>
 
   <script type="text/jsx">
@@ -38,10 +38,11 @@
       }
     })
 
-    var SwapForm = React.createClass({
+    var Header = React.createClass({
       getInitialState: function() {
         return {
-          hidden: false
+          hidden: false,
+          name: ListStore.listName
         }
       },
 
@@ -54,16 +55,29 @@
         var swapName = this.refs.swapName.getDOMNode().value
         this.refs.swapName.getDOMNode().value = ''
         ListStore.listName = swapName;
+        this.setState({name: ListStore.listName});
+        this.setState({hidden: true});
         ListStore.loadItems();
+      },
+
+      resetErrors: function() {
+        if (ListStore.getErrors().length > 0){
+          ListStore.setErrors('');
+          $(ListStore).trigger('hasErrors');
+          console.log('called')
+        }
       },
 
       render: function() {
         return (
           <div>
-            <a className="swap" onClick={this.setHiddenState}></a>
+            <h1>{this.state.name}
+              <a className="swap" onClick={this.setHiddenState}></a>
+            </h1>
+
             <div className={this.state.hidden ? '' : 'hidden'}>
-              <form onSubmit={this.setListName}>
-                <input type="text" ref="swapName" placeholder="Swap list name"/>
+              <form onSubmit={this.setListName} className="swap-form">
+                <input type="text" ref="swapName" placeholder="Swap list name" onKeyUp={this.resetErrors}/>
               </form>
             </div>
           </div>
@@ -95,7 +109,9 @@
     var List = React.createClass({
       getInitialState: function() {
         return (
-          {items: []}
+          {
+            items: [],
+          }
         )
       },
 
@@ -118,9 +134,34 @@
       }
     })
 
+    var Errors = React.createClass({
+      getInitialState: function() {
+        return (
+          {
+            errors: ''
+          }
+        )
+      },
+
+      componentWillMount: function() {
+        $(ListStore).on('hasErrors', function() {
+          this.setState({ errors: ListStore.getErrors() })
+        }.bind(this))
+      },
+
+      render: function() {
+        return (
+          <div id='errors' className={this.state.errors.length > 0 ? '' : 'hidden'}>
+            { this.state.errors }
+          </div>
+        )
+      }
+    })
+
     React.render(<CreationForm />, document.getElementById('form-container') );
     React.render(<List />, document.getElementById('list-container') );
-    React.render(<SwapForm />, document.getElementById('swap-icon') );
+    React.render(<Header />, document.getElementById('header') );
+    React.render(<Errors />, document.getElementById('errors') );
     ListStore.loadItems("NickHongList");
   </script>
 </body>

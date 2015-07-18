@@ -1,7 +1,12 @@
 var items = []
+var errors = []
 
 var notifyComponents = function() {
   $(ListStore).trigger('storeHasChanged')
+}
+
+var showErrors = function() {
+  $(ListStore).trigger('hasErrors');
 }
 
 var findItemById = function(id) {
@@ -30,6 +35,11 @@ ListStore = {
     loadRequest.done(function(dataFromServer) {
       items = dataFromServer.items
       notifyComponents()
+    })
+
+    loadRequest.error(function(err) {
+      errors = err.responseText;
+      $(ListStore).trigger('hasErrors')
     })
   },
   addItem: function(itemDescription) {
@@ -72,5 +82,13 @@ ListStore = {
       items.splice(indexOfItem,1);
       notifyComponents();
     })
+  },
+
+  setErrors: function(newErrors) {
+    errors = newErrors;
+  },
+
+  getErrors: function() {
+    return errors;
   }
 }
